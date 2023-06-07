@@ -9,7 +9,10 @@ beforeEach(async()=>{
 	testCompany = result.rows[0]
 })
 
-afterEach(async() => {await db.query(`DELETE FROM companies`)});
+afterEach(async() => {
+	await db.query(`DELETE FROM companies`),
+	await db.query('DELETE FROM invoices')
+});
 
 afterAll(async() => {await db.end()});
 
@@ -41,7 +44,6 @@ describe("Post /companies", () => {
 		const res = await request(app).post('/companies').send({code: "check", name: "Checking Create", description: 'Does this thing work?'});
 		expect(res.statusCode).toBe(201);
 		expect(res.body).toEqual({ company: { code: 'check', name : 'Checking Create', description: 'Does this thing work?'}} );
-		
 	})
 })
 
