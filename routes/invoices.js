@@ -6,7 +6,7 @@ const router = express.Router();
 router.get('/', async(req, res, next) => {
 	try {
 		const results = await db.query('SELECT * FROM invoices');
-		return res.json({invoices: [results.rows]})
+		return res.json({invoices: results.rows})
 	} catch(e){
 		next(e)
 	}
@@ -18,7 +18,8 @@ router.get('/:id', async(req, res, next) => {
 		const result = await db.query(
 			'SELECT * FROM invoices WHERE id=$1', [id]
 		);
-		if (result.length === 0){
+
+		if (result.rows.length === 0){
 			throw new ExpressError(`Can not find invoice with id ${id}`, 404)
 		}
 		return res.json({invoice: result.rows[0]})
@@ -46,6 +47,7 @@ router.put('/:id', async(req, res, next) => {
 		const result = await db.query(
 			'UPDATE invoices SET amt=$2 WHERE id=$1 RETURNING id, comp_code, amt, paid, add_date, paid_date', [id, amt]
 		)
+		console.log(result.rows)
 		if(result.rows.length === 0){
 			throw new ExpressError(`Can not find invoice with id of ${id}`, 404);
 		};
